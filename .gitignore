@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+
+# Cypress environment files
+cypress.env.json
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Others
+.env
