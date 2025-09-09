@@ -23,3 +23,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add('loginSession', (username, password) => {
+  cy.session([username, password], () => {
+    cy.visit('https://ignf.github.io/cartes.gouv.fr-editeur-carto/')
+    cy.contains('Connectez-vous pour commencer').click()
+    cy.get('[name="username"]').type(username)
+    cy.get('[name="password"]').type(password)
+    cy.get('[data-action-id="login"]').click();
+    cy.contains('Mon espace').should('be.visible')
+  })
+})
