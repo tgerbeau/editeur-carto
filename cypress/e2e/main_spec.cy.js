@@ -3,7 +3,7 @@ function login(username, password) {
   cy.contains('Se connecter').click()
   cy.get('[name="username"]').type(username)
   cy.get('[name="password"]').type(password)
-  cy.get('[data-action-id="login"]').click();
+  cy.get('.fr-btns-group > [type="submit"]').click()
   
 }
 
