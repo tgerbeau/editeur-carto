@@ -4,7 +4,8 @@ module.exports = defineConfig({
   e2e: {
     projectId: "6fk98d",
     env: {
-      baseUrl: "https://ignf.github.io/cartes.gouv.fr-editeur-carto/"
+      baseUrl: "https://ignf.github.io/cartes.gouv.fr-editeur-carto/",
+      prodUrl: "https://cartes.gouv.fr/cartes/"
     },
     setupNodeEvents(on, config) {
       // implement node event listeners here
