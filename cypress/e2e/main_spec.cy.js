@@ -1,10 +1,9 @@
 function login(username, password) {
-  cy.visit('https://ignf.github.io/cartes.gouv.fr-editeur-carto/')
+  cy.visit(Cypress.env('baseUrl'))
   cy.contains('Se connecter').click()
   cy.get('[name="username"]').type(username)
   cy.get('[name="password"]').type(password)
-  cy.get('.fr-btns-group > [type="submit"]').click()
-  
+  cy.get('[data-action-id="login"]').click();
 }
 
 function checkMonEspaceElements() {
@@ -14,14 +13,13 @@ function checkMonEspaceElements() {
   cy.contains('Mon compte').should('be.visible')
   cy.contains('Se déconnecter').should('be.visible')
   cy.contains('Mon espace').click()
-    
 }
 
 function creerUneCarte() {
   cy.log('Création d\'une nouvelle carte')
   cy.get('.create').click()
   cy.get('.fr-text').should('have.text', 'Carte sans titre')
-} 
+}
 
 function verifierElementsVisuels() {
   cy.log('Vérification des éléments visuels de l’interface')
@@ -44,8 +42,6 @@ describe('Tests utilisateur connecté', () => {
     creerUneCarte()
     verifierElementsVisuels()
   })
-
-  
 })
 
 

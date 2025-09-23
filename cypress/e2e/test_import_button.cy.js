@@ -1,5 +1,5 @@
 function testImportButton(filePath, logMsg) {
-  cy.visit('https://ignf.github.io/cartes.gouv.fr-editeur-carto/')
+  cy.visit(Cypress.env('baseUrl'))
   cy.contains('Se connecter').click()
   cy.get('[name="username"]').type(Cypress.env('username'))
   cy.get('[name="password"]').type(Cypress.env('password'))  

@@ -1,6 +1,6 @@
 describe('Recherche d\'adresse', () => {
   it('doit permettre de rechercher une adresse et de sélectionner le premier résultat', () => {
-    cy.visit('https://ignf.github.io/cartes.gouv.fr-editeur-carto/')
+    cy.visit(Cypress.env('baseUrl'))
     cy.contains('Se connecter').click()
     cy.get('[name="username"]').type(Cypress.env('username'))
     cy.get('[name="password"]').type(Cypress.env('password'))
