@@ -26,5 +26,5 @@ jobs:
         run: npx cypress run
         env:
           CYPRESS_baseUrl: https://ignf.github.io/cartes.gouv.fr-editeur-carto/
-          USERNAME: ${{ secrets.CYPRESS_USERNAME }}
-          PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
