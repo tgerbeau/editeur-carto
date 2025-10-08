@@ -23,6 +23,8 @@ jobs:
         run: npm ci
 
       - name: Run Cypress tests
-        env:
-          CYPRESS_USERNAME: "genericign"
         run: npx cypress run
+        env:
+          CYPRESS_baseUrl: https://ignf.github.io/cartes.gouv.fr-editeur-carto/
+          USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
