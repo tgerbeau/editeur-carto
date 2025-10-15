@@ -16,7 +16,6 @@
   "type": "commonjs",
   
   "scripts": {
-    "start": "node index.js",
     "test": "cypress run"
   },
   "dependencies": {
