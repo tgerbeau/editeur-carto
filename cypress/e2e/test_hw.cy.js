@@ -4,6 +4,8 @@ describe('Hello World Test', () => {
      cy.contains('Se connecter').click()
      const username = Cypress.env('CYPRESS_USERNAME');
      const password = Cypress.env('CYPRESS_PASSWORD');
+     cy.log('Username: ' + username)
+     cy.log('Password: ' + password)
      cy.get('[name="username"]').type(username)
      cy.get('[name="password"]').type(password)
      cy.log('Username: ' + username)
