@@ -11,6 +11,13 @@ jobs:
       matrix:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
+      - name: Debug secrets
+        run: |
+          echo "CYPRESS_USERNAME is set to: ${CYPRESS_USERNAME:-not set}"
+          echo "CYPRESS_PASSWORD is set to: ${CYPRESS_PASSWORD:-not set}"
+        env:
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run
