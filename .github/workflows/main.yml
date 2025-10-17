@@ -13,8 +13,8 @@ jobs:
     steps:
       - name: Debug secrets
         run: |
-          echo "CYPRESS_USERNAME is set to: ${CYPRESS_USERNAME:-not set}"
-          echo "CYPRESS_PASSWORD is set to: ${CYPRESS_PASSWORD:-not set}"
+          echo "CYPRESS_USERNAME is set to: ${CYPRESS_USERNAME:secrets.CYPRESS_USERNAME}"
+          echo "CYPRESS_PASSWORD is set to: ${CYPRESS_PASSWORD:secrets.CYPRESS_PASSWORD}"
         env:
           CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
           CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
