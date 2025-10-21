@@ -13,8 +13,9 @@ jobs:
     steps:
       - name: Debug secrets
         run: |
-          echo "CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}"
-          echo "CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}"
+          echo "CYPRESS_USERNAME: ${{ env.CYPRESS_USERNAME != '' }}"
+          echo "CYPRESS_PASSWORD: ${{ env.CYPRESS_PASSWORD != '' }}"
+          
         env:
           CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
           CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
