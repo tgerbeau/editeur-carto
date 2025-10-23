@@ -11,6 +11,14 @@ jobs:
       matrix:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
+      - name: Debug secrets
+        run: |
+          echo "CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME != '' }}"
+          echo "CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD != '' }}"
+          
+        env:
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run
@@ -23,10 +31,11 @@ jobs:
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
           parallel: true # Runs test in parallel using settings above
+          
         env:
           CYPRESS_baseUrl: https://ignf.github.io/cartes.gouv.fr-editeur-carto/
-          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
-          # in GitHub repo → Settings → Secrets → Actions
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
+          
+        
