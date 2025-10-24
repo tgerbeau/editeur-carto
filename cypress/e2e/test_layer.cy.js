@@ -2,8 +2,8 @@ describe('Module Couche de données', () => {
   it('affiche et active une couche de données', () => {
     cy.visit(Cypress.env('baseUrl'))
     cy.contains('Se connecter').click()
-    cy.get('[name="username"]').type(Cypress.env('CYPRESS_USERNAME'))
-    cy.get('[name="password"]').type(Cypress.env('CYPRESS_PASSWORD'))
+    cy.get('[name="username"]').type(Cypress.env('username'))
+    cy.get('[name="password"]').type(Cypress.env('password'))
     cy.get('[data-action-id="login"]').click();
     cy.contains('Mon espace').should('be.visible')
     cy.get('.create').click() 

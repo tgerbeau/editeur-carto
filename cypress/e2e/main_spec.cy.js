@@ -31,8 +31,8 @@ function verifierElementsVisuels() {
 
 describe('Tests utilisateur connecté', () => {
   before(() => {
-    const username = Cypress.env('CYPRESS_USERNAME')
-    const password = Cypress.env('CYPRESS_PASSWORD')
+    const username = Cypress.env('username')
+    const password = Cypress.env('password')
     login(username, password)
     cy.contains('Mon espace').should('be.visible')
   })
