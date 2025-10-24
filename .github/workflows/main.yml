@@ -13,12 +13,12 @@ jobs:
     steps:
       - name: Debug secrets
         run: |
-          echo "CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME != '' }}"
-          echo "CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD != '' }}"
+          echo "CYPRESS_username: ${{ secrets.CYPRESS_username != '' }}"
+          echo "CYPRESS_password: ${{ secrets.CYPRESS_password != '' }}"
           
         env:
-          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
-          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
+          CYPRESS_username: ${{ secrets.CYPRESS_username }}
+          CYPRESS_password: ${{ secrets.CYPRESS_password }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run
