@@ -15,6 +15,8 @@ jobs:
         run: |
           echo "CYPRESS_username: ${{ secrets.CYPRESS_username != '' }}"
           echo "CYPRESS_password: ${{ secrets.CYPRESS_password != '' }}"
+          echo "CYPRESS_username: ${{ secrets.CYPRESS_username != '' }}"
+          echo "CYPRESS_password: ${{ secrets.CYPRESS_password != '' }}"
           
         env:
           CYPRESS_username: ${{ secrets.CYPRESS_username }}
@@ -35,6 +37,8 @@ jobs:
         env:
           CYPRESS_baseUrl: https://ignf.github.io/cartes.gouv.fr-editeur-carto/
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_username }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_password }}
           CYPRESS_USERNAME: ${{ secrets.CYPRESS_username }}
           CYPRESS_PASSWORD: ${{ secrets.CYPRESS_password }}
           
