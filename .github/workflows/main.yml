@@ -19,7 +19,7 @@ jobs:
           
         env:
           CYPRESS_username: ${{ secrets.CYPRESS_username }}
-          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_password }}
+          CYPRESS_password: ${{ secrets.CYPRESS_password }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run
@@ -36,8 +36,8 @@ jobs:
         env:
           CYPRESS_baseUrl: https://ignf.github.io/cartes.gouv.fr-editeur-carto/
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_USERNAME: ${{ secrets.CYPRESS_username }}
-          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_password }}
+          CYPRESS_username: ${{ secrets.CYPRESS_username }}
+          CYPRESS_password: ${{ secrets.CYPRESS_password }}
 
           
         
