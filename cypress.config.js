@@ -6,8 +6,8 @@ module.exports = defineConfig({
     env: {
       baseUrl: "https://ignf.github.io/cartes.gouv.fr-editeur-carto/",
       prodUrl: "https://cartes.gouv.fr/cartes/",
-      USERNAME: process.env.CYPRESS_USERNAME,
-      PASSWORD: process.env.CYPRESS_PASSWORD,
+      username: process.env.CYPRESS_USERNAME,
+      password: process.env.CYPRESS_PASSWORD,
     },
     setupNodeEvents(on, config) {
       // implement node event listeners here
