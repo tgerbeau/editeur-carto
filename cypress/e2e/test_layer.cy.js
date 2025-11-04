@@ -9,7 +9,7 @@ describe('Module Couche de données', () => {
     cy.get('.create').click() 
     cy.get('[id^="GPshowLayersListPicto-"]').click()
     //cy.get('[id^="GPlayersList-"]    // Ouvre le module Couche de données (adapte le sélecteur si besoin)
-    cy.contains('Couches de données').click()
+    cy.contains('Couches').click()
 
     // Vérifie qu'il y a au moins un élément GPlayerSwitcher_ID_
     cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 0)
