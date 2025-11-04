@@ -23,7 +23,7 @@ function creerUneCarte() {
 
 function verifierElementsVisuels() {
   cy.log('Vérification des éléments visuels de l’interface')
-  cy.get('input[type="search"], .search, [placeholder*="Rechercher" i]').should('be.visible')
+  cy.get('[id^="GPsearchInputText-32"]').should('be.visible')
   cy.get('[id*="bar"]').should('be.visible') // barre haut droite (avec id dynamique)
   cy.get('.ol-viewport').should('be.visible') // la carte elle-même 
 }
