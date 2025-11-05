@@ -11,15 +11,7 @@ jobs:
       matrix:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
-      - name: Debug secrets
-        run: |
-          echo "CYPRESS_username: ${{ secrets.CYPRESS_username != '' }}"
-          echo "CYPRESS_password: ${{ secrets.CYPRESS_password != '' }}"
-         
-          
-        env:
-          CYPRESS_username: ${{ secrets.CYPRESS_username }}
-          CYPRESS_password: ${{ secrets.CYPRESS_password }}
+
       - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run
