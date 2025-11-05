@@ -1,17 +1,19 @@
 describe('Recherche d\'adresse', () => {
   it('doit permettre de rechercher une adresse et de sélectionner le premier résultat', () => {
-    cy.visit(Cypress.env('baseUrl'))
-    cy.contains('Se connecter').click()
-    cy.get('[name="username"]').type(Cypress.env('username'))
-    cy.get('[name="password"]').type(Cypress.env('password'))
-    cy.get('[data-action-id="login"]').click();
-    cy.contains('Mon espace').should('be.visible')
-    cy.get('.create').click() 
-    cy.get('[id^="GPsearchInputText-32"]').type('10 Rue de la Paix, 50100 Cherbourg-en-Cotentin{enter}')
-    cy.get('[id^="GPsearchInputText-32"]').should('have.length.greaterThan', 0)
-    // Sélectionne le premier élément de la liste déroulante des résultats
-    cy.get('[id^="GPsearchInputText-32"]').first().click()
-    // Vérifie que le résultat sélectionné s'affiche sur la carte ou dans le champ (adapte le sélecteur si besoin)
-    cy.contains('10 Rue de la Paix, 50100 Cherbourg-en-Cotentin').should('be.visible')
+    cy.fixture('adresse').then((data) => {
+      cy.visit(Cypress.env('baseUrl'))
+      cy.contains('Se connecter').click()
+      cy.get('[name="username"]').type(Cypress.env('username'))
+      cy.get('[name="password"]').type(Cypress.env('password'))
+      cy.get('[data-action-id="login"]').click();
+      cy.contains('Mon espace').should('be.visible')
+      cy.get('.create').click() 
+      cy.get('[id^="GPsearchInputText-32"]').type('10 Rue de la Paix, 50100 Cherbourg-en-Cotentin{enter}')
+      cy.get('[id^="GPsearchInputText-32"]').should('have.length.greaterThan', 0)
+      // Sélectionne le premier élément de la liste déroulante des résultats
+      cy.get('[id^="GPsearchInputText-32"]').first().click()
+      // Vérifie que le résultat sélectionné s'affiche sur la carte ou dans le champ (adapte le sélecteur si besoin)
+      cy.contains(data.adresse).should('be.visible')
+    })
   })
 })
