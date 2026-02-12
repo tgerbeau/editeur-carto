@@ -6,7 +6,7 @@ describe('Module Couche de données', () => {
     cy.get('[name="password"]').type(Cypress.env('password'))
     cy.get('[data-action-id="login"]').click();
    
-    cy.get('.create').click() 
+    cy.createMapWithPopupHandling()
     cy.get('[id^="GPshowLayersListPicto-"]').click()
     //cy.get('[id^="GPlayersList-"]    // Ouvre le module Couche de données (adapte le sélecteur si besoin)
     cy.contains('Couches').click()

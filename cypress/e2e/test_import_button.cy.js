@@ -5,7 +5,7 @@ function testImportButton(filePath, logMsg) {
   cy.get('[name="password"]').type(Cypress.env('password'))  
   cy.get('[data-action-id="login"]').click();
   cy.contains('Mon espace').should('be.visible')
-  cy.get('.create').click()  
+  cy.createMapWithPopupHandling()
   cy.get('[aria-label="Importer une donnée locale"]').click()
   cy.get("#upload-file").click();
   cy.get("#upload-file").selectFile(filePath)

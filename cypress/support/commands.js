@@ -33,3 +33,18 @@ Cypress.Commands.add('loginSession', (username, password) => {
     cy.contains('Mon espace').should('be.visible')
   })
 })
+
+Cypress.Commands.add('createMapWithPopupHandling', () => {
+  cy.get('.create').click()
+  
+  // Wait briefly for potential popup
+  cy.wait(500)
+  
+  // Handle ConnectDialog if it appears (non-blocking)
+  cy.get('body').then(($body) => {
+    const $dialog = $body.find('#ConnectDialog')
+    if ($dialog.length > 0 && $dialog.is(':visible')) {
+      cy.get('#ConnectDialog').find('button').first().click()
+    }
+  })
+})

@@ -8,21 +8,22 @@ describe('Parcours de sauvegarde de carte', () => {
     cy.contains('Mon espace').should('be.visible')
 
     // Création d'une nouvelle carte
-    cy.get('.create').click()
+    cy.createMapWithPopupHandling()
     cy.get('.fr-text').should('have.text', 'Carte sans titre')
 
     // Clique sur savegarde pour Ajout d'un titre à la carte
     const titreCarte = 'Carte de test sauvegarde QA'
 
-    cy.get('#ol-button-180').click()
+    cy.get('[data-action="save-map"]').first().click({ force: true })
     // Add titre carte
     cy.get('[name="name"]').clear().type(titreCarte)
     // Thématique
     cy.get('#save-theme').select('Agriculture')
     cy.get("div.fr-modal__footer button:nth-of-type(1)").click(); 
 
-    //
-    cy.get('.fr-text').should('have.text', titreCarte)    
+    // Wait for modal to close and title to update
+    cy.get('div.fr-modal__footer button:nth-of-type(1)').should('not.be.visible')
+    cy.get('.fr-text', { timeout: 15000 }).should('have.text', titreCarte)    
     
   })
 })

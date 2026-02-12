@@ -17,13 +17,13 @@ function checkMonEspaceElements() {
 
 function creerUneCarte() {
   cy.log('Création d\'une nouvelle carte')
-  cy.get('.create').click()
+  cy.createMapWithPopupHandling()
   cy.get('.fr-text').should('have.text', 'Carte sans titre')
 }
 
 function verifierElementsVisuels() {
   cy.log('Vérification des éléments visuels de l’interface')
-  cy.get('[id^="GPsearchInputText-32"]').should('be.visible')
+  cy.get('[id^="GPsearchInputText"]').should('be.visible')
   cy.get('[id*="bar"]').should('be.visible') // barre haut droite (avec id dynamique)
   cy.get('.ol-viewport').should('be.visible') // la carte elle-même 
 }
