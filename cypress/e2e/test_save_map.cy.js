@@ -28,7 +28,7 @@ describe('Parcours de sauvegarde de carte', () => {
     cy.get("div.fr-modal__footer button").first().click()
 
     // Verify save was successful by checking modal closed or success message
-    cy.wait(2000)
+    cy.wait(1000)
     
     // Check if modal is closed or if we're back to the map view
     cy.get('body').then(($body) => {

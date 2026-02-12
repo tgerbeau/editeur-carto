@@ -3,8 +3,8 @@ const { defineConfig } = require("cypress");
 module.exports = defineConfig({
   e2e: {
     projectId: "f9h5s9",
-    pageLoadTimeout: 120000,
-    defaultCommandTimeout: 10000,
+    pageLoadTimeout: 90000,
+    defaultCommandTimeout: 8000,
     env: {
       baseUrl: "https://ignf.github.io/cartes.gouv.fr-editeur-carto/",
       prodUrl: "https://cartes.gouv.fr/cartes/",

@@ -37,14 +37,20 @@ Cypress.Commands.add('loginSession', (username, password) => {
 Cypress.Commands.add('createMapWithPopupHandling', () => {
   cy.get('.create').click()
   
-  // Wait briefly for potential popup
-  cy.wait(500)
+  // Wait for page to load
+  cy.wait(800)
   
-  // Handle ConnectDialog if it appears (non-blocking)
-  cy.get('body').then(($body) => {
-    const $dialog = $body.find('#ConnectDialog')
-    if ($dialog.length > 0 && $dialog.is(':visible')) {
-      cy.get('#ConnectDialog').find('button').first().click()
+  // Check if ConnectDialog popup appears and click "Voir mes cartes"
+  cy.get('#ConnectDialog').then(($dialog) => {
+    if ($dialog.is(':visible')) {
+      cy.log('Popup "Créer votre carte" détectée - clic sur "Voir mes cartes"')
+      // Click on "Voir mes cartes" button/link
+      cy.get('#ConnectDialog').contains(/Voir mes cartes/i).click()
+      cy.wait(300)
+    } else {
+      cy.log('Pas de popup - continue normalement')
     }
+  }).then(() => {
+    cy.log('Création de carte terminée')
   })
 })
