@@ -1,50 +1,52 @@
-function testImportButton(filePath, logMsg) {
-  cy.visit(Cypress.env('baseUrl'))
-  cy.contains('Se connecter').click()
-  cy.get('[name="username"]').type(Cypress.env('username'))
-  cy.get('[name="password"]').type(Cypress.env('password'))  
-  cy.get('[data-action-id="login"]').click();
-  cy.contains('Mon espace').should('be.visible')
-  cy.createMapWithPopupHandling()
-  cy.get('[aria-label="Importer une donnée locale"]').click()
-  cy.get("#upload-file").click();
-  cy.get("#upload-file").selectFile(filePath)
-  cy.get('.fr-mt-2w > .fr-btn').should('be.visible').click()
-  cy.get('[id^="fr-message--"]')
-  .should('exist')
-  .each(($message) => {
-    // Faire quelque chose pour chaque message trouvé
-    cy.wrap($message).should('be.visible');
-  });
-  cy.log(logMsg)
+// Importe un fichier local et vérifie qu'au moins une couche a été ajoutée à la carte.
+function importLocalFile(filePath) {
+  cy.get('[id^="GPshowLayersListPicto-"]')
+    .invoke('text')
+    .then((txt) => parseInt(txt, 10) || 0)
+    .as('nbCouchesAvant')
+
+  cy.get('[data-action="import-local"]').click()
+  cy.get('#right-panel-action').should('have.attr', 'open')
+  cy.get('#upload-file').selectFile(filePath, { force: true })
+  cy.contains('#right-panel-action button', 'Importer').should('be.visible').click()
+
+  // Le compteur du bouton « Couches » reflète l'ajout de la nouvelle couche
+  cy.get('@nbCouchesAvant').then((avant) => {
+    cy.get('[id^="GPshowLayersListPicto-"]', { timeout: 30000 })
+      .invoke('text')
+      .then((txt) => parseInt(txt, 10) || 0)
+      .should('be.gt', avant)
+  })
+
+  cy.get('#right-panel-action').then(($panel) => {
+    if ($panel.attr('open') !== undefined) {
+      cy.wrap($panel).find('.ignf-panel__header button').first().click()
+    }
+  })
 }
 
-describe('Test bouton Import', () => {
-  it('importe un GeoJSON', () => {
-    testImportButton('cypress/fixtures/test.geojson', 'Import GeoJSON OK')
-    cy.get('#right-panel-action > .ignf-panel__header > .ignf-panel__buttons > .fr-btn').click()
-    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 1)
-})
-  it('importe un CSV', () => {
-    testImportButton('cypress/fixtures/test.csv', 'Import CSV OK')
-    cy.get('#right-panel-action > .ignf-panel__header > .ignf-panel__buttons > .fr-btn').click()
-    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 1)
-  })
-  it('importe un Shapefile', () => {
-    testImportButton('cypress/fixtures/test.zip', 'Import Shapefile OK')
-    cy.get('#right-panel-action > .ignf-panel__header > .ignf-panel__buttons > .fr-btn').click()
-    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 1)
-  })
-  it('importe un GeoPackage', () => {
-    testImportButton('cypress/fixtures/test.gpkg', 'Import GeoPackage OK')
-    cy.get('#right-panel-action > .ignf-panel__header > .ignf-panel__buttons > .fr-btn').click()
-    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 1)
-  })
-  it('importe un GPX', () => {
-    testImportButton('cypress/fixtures/test.gpx', 'Import GPX OK')
-    cy.get('#right-panel-action > .ignf-panel__header > .ignf-panel__buttons > .fr-btn').click()
-    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 2)
+describe('Import de données locales', () => {
+  beforeEach(() => {
+    cy.login()
+    // L'import local n'existe que dans l'éditeur de cartes, pas dans l'explorateur.
+    cy.visit(Cypress.env('editorUrl'))
+    cy.dismissWelcomePopup(true)
+    cy.createMap()
   })
 
+  const cas = [
+    ['GeoJSON', 'cypress/fixtures/test.geojson'],
+    ['CSV', 'cypress/fixtures/test.csv'],
+    ['Shapefile (zip)', 'cypress/fixtures/test.zip'],
+    ['GeoPackage', 'cypress/fixtures/test.gpkg'],
+    ['GPX', 'cypress/fixtures/test.gpx'],
+  ]
 
+  cas.forEach(([format, fichier]) => {
+    it(`importe un ${format}`, () => {
+      importLocalFile(fichier)
+      cy.get('[id^="GPshowLayersListPicto-"]').click()
+      cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.at.least', 3)
+    })
+  })
 })
