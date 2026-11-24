@@ -1,30 +1,38 @@
+// Le picto est un toggle (aria-pressed) ; dans l'éditeur le panneau devient visible sans attribut `open`.
+function openLayersList() {
+  cy.get('[id^="GPshowLayersListPicto-"]').then(($picto) => {
+    if ($picto.attr('aria-pressed') !== 'true') cy.wrap($picto).click()
+  })
+  cy.get('[id^="GPshowLayersListPicto-"]').should('have.attr', 'aria-pressed', 'true')
+  cy.get('[id^="GPlayersList-"]').should('be.visible')
+}
+
 describe('Module Couche de données', () => {
-  it('affiche et active une couche de données', () => {
-    cy.visit(Cypress.env('baseUrl'))
-    cy.contains('Se connecter').click()
-    cy.get('[name="username"]').type(Cypress.env('username'))
-    cy.get('[name="password"]').type(Cypress.env('password'))
-    cy.get('[data-action-id="login"]').click();
-   
-    cy.createMapWithPopupHandling()
-    cy.get('[id^="GPshowLayersListPicto-"]').click()
-    //cy.get('[id^="GPlayersList-"]    // Ouvre le module Couche de données (adapte le sélecteur si besoin)
-    cy.contains('Couches').click()
+  beforeEach(() => {
+    cy.login()
+    cy.openEditor()
+    cy.createMap()
+  })
 
-    // Vérifie qu'il y a au moins un élément GPlayerSwitcher_ID_
-    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.greaterThan', 0)
+  it('affiche le gestionnaire de couches avec ses actions', () => {
+    openLayersList()
 
-    // Pour chaque couche, vérifie la présence des éléments poubelle, oeil, bouton ajouter
-    cy.get('[id^="GPlayerSwitcher_ID_"]').each(($el) => {
-      // Poubelle (icône de suppression, adapte le sélecteur si besoin)
-      cy.get('[id^="GPremove_ID_"]').should('exist')
-      // Oeil (icône de visibilité, adapte le sélecteur si besoin)
-      cy.get('[id^="GPvisibilityPicto_ID_"]').should('exist')
-      // Bouton ajouter (adapte le sélecteur si besoin)
-      cy.get('[id^="add-layer-layerswitcher"]').should('exist')
+    cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.at.least', 1)
+    cy.get('#add-layer-layerswitcher').should('be.visible')
+
+    cy.get('[id^="GPlayerSwitcher_ID_"]').each(($layer) => {
+      cy.wrap($layer).find('[id^="GPremove_ID_"]').should('exist')
+      cy.wrap($layer).find('[id^="GPvisibilityPicto_ID_"]').should('exist')
     })
 
-    // Vérifie l'effet sur la carte (adapte le sélecteur ou la vérification selon ton application)
     cy.get('.ol-viewport').should('be.visible')
+  })
+
+  it('masque puis réaffiche une couche', () => {
+    openLayersList()
+    cy.get('[id^="GPvisibilityPicto_ID_"]').first().as('eye')
+    cy.get('@eye').should('have.attr', 'aria-pressed', 'true').click()
+    cy.get('@eye').should('have.attr', 'aria-pressed', 'false').click()
+    cy.get('@eye').should('have.attr', 'aria-pressed', 'true')
   })
 })

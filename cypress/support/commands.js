@@ -97,9 +97,8 @@ function assertAuthenticated() {
   dismissWelcomePopup()
   cy.viewport(375, 812)
   cy.get('#button-menu').should('be.visible').click()
-  // Le menu se re-rend après ouverture : on requête à chaque étape plutôt que de chaîner.
-  cy.get(`${CONNECTED_MARKER}:visible`, { timeout: 30000 }).should('exist')
-  cy.get(`${CONNECTED_MARKER}:visible button`).filter(':contains("Mon espace")').last().click()
+  // Le menu se re-rend après ouverture : cy.contains réessaie jusqu'à trouver le bouton.
+  cy.contains(`${CONNECTED_MARKER}:visible button`, 'Mon espace', { timeout: 30000 }).click()
   cy.get(`${CONNECTED_MARKER} a[href$="/explorer-les-cartes/login"]`).should('not.exist')
   cy.get('#close-button').click()
   cy.viewport(1280, 800)
@@ -133,6 +132,41 @@ Cypress.Commands.add('dismissWelcomePopup', (waitForAppearance = false, attempt 
   })
 })
 
+// Ouvre l'éditeur de cartes (creer-une-carte). Son authentification (compte « Ma carte ») est
+// distincte du SSO : on s'identifie via sa modale #login-modal si des identifiants éditeur existent.
+const EDITOR_LOGIN_BTN = 'button[data-action="login"]:visible'
+
+Cypress.Commands.add('openEditor', () => {
+  const username = Cypress.env('editorUsername')
+  const password = Cypress.env('editorPassword')
+
+  cy.visit(Cypress.env('editorUrl'))
+  cy.get('.ol-viewport', { timeout: 30000 }).should('be.visible')
+  cy.dismissWelcomePopup(true)
+
+  cy.get('body', { log: false }).then(($body) => {
+    if (!username || !password || !$body.find(EDITOR_LOGIN_BTN).length) return
+    cy.get(EDITOR_LOGIN_BTN).first().click()
+    cy.get('#login-modal input[name="username"]', { timeout: 10000 }).should('be.visible')
+      .clear().type(username, { log: false })
+    cy.get('#login-modal input[name="password"]').clear().type(password, { log: false })
+    cy.contains('#login-modal button', 'Se connecter').click()
+    cy.get('body', { timeout: 30000 }).should(($b) => {
+      expect($b.find('#login-modal[open]'), 'connexion éditeur refusée (vérifier CYPRESS_EDITOR_USERNAME/PASSWORD)').to.have.length(0)
+      expect($b.find(EDITOR_LOGIN_BTN), 'bouton « Se connecter » encore visible').to.have.length(0)
+    })
+  })
+})
+
+// L'éditeur ignore silencieusement l'enregistrement sans connexion : on échoue explicitement.
+function assertEditorAuthenticated() {
+  cy.get('body', { log: false }).then(($body) => {
+    if ($body.find(EDITOR_LOGIN_BTN).length) {
+      throw new Error("L'enregistrement nécessite un compte éditeur « Ma carte » : renseigner CYPRESS_EDITOR_USERNAME et CYPRESS_EDITOR_PASSWORD dans .env")
+    }
+  })
+}
+
 // Ferme la boîte d'accueil si elle est affichée et attend la carte vierge.
 Cypress.Commands.add('createMap', () => {
   cy.get('.ol-viewport', { timeout: 30000 }).should('be.visible')
@@ -149,7 +183,7 @@ Cypress.Commands.add('createMap', () => {
 Cypress.Commands.add('mapMenuAction', (action) => {
   cy.get(`[data-action="${action}"]`).then(($btn) => {
     if (!$btn.filter(':visible').length) {
-      cy.contains('button', 'Gérer ma carte').click()
+      cy.get('button[aria-label="Gestion ma carte"]').click()
     }
   })
   cy.get(`[data-action="${action}"]`).filter(':visible').first().click()
@@ -157,6 +191,7 @@ Cypress.Commands.add('mapMenuAction', (action) => {
 
 // Enregistre la carte courante avec un nom et une thématique, et attend la fermeture de la modale.
 Cypress.Commands.add('saveMap', (name, theme = 'Agriculture') => {
+  assertEditorAuthenticated()
   cy.mapMenuAction('save-map')
   cy.get('input[name="name"]', { timeout: 10000 }).should('be.visible').clear().type(name)
   cy.get('#save-theme').select(theme)

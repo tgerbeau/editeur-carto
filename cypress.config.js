@@ -25,11 +25,16 @@ module.exports = defineConfig({
       editorUrl: "https://cartes.gouv.fr/creer-une-carte/",
       username: process.env.CYPRESS_USERNAME,
       password: process.env.CYPRESS_PASSWORD,
+      // L'éditeur (creer-une-carte) a son propre compte « Ma carte », distinct du SSO Géoplateforme.
+      editorUsername: process.env.CYPRESS_EDITOR_USERNAME,
+      editorPassword: process.env.CYPRESS_EDITOR_PASSWORD,
     },
     setupNodeEvents(on, config) {
       // Les variables d'environnement (.env / CI) priment sur cypress.env.json
       if (process.env.CYPRESS_USERNAME) config.env.username = process.env.CYPRESS_USERNAME
       if (process.env.CYPRESS_PASSWORD) config.env.password = process.env.CYPRESS_PASSWORD
+      if (process.env.CYPRESS_EDITOR_USERNAME) config.env.editorUsername = process.env.CYPRESS_EDITOR_USERNAME
+      if (process.env.CYPRESS_EDITOR_PASSWORD) config.env.editorPassword = process.env.CYPRESS_EDITOR_PASSWORD
       return config
     },
   },

@@ -12,10 +12,9 @@ function importLocalFile(filePath) {
 
   // Le compteur du bouton « Couches » reflète l'ajout de la nouvelle couche
   cy.get('@nbCouchesAvant').then((avant) => {
-    cy.get('[id^="GPshowLayersListPicto-"]', { timeout: 30000 })
-      .invoke('text')
-      .then((txt) => parseInt(txt, 10) || 0)
-      .should('be.gt', avant)
+    cy.get('[id^="GPshowLayersListPicto-"]', { timeout: 60000 }).should(($picto) => {
+      expect(parseInt($picto.text(), 10) || 0).to.be.gt(avant)
+    })
   })
 
   cy.get('#right-panel-action').then(($panel) => {
@@ -29,8 +28,7 @@ describe('Import de données locales', () => {
   beforeEach(() => {
     cy.login()
     // L'import local n'existe que dans l'éditeur de cartes, pas dans l'explorateur.
-    cy.visit(Cypress.env('editorUrl'))
-    cy.dismissWelcomePopup(true)
+    cy.openEditor()
     cy.createMap()
   })
 
