@@ -116,13 +116,14 @@ const closeButtonsOf = ($dialog) =>
   $dialog.find('button').filter((_, btn) => btn.innerText.trim() === 'Fermer')
 
 Cypress.Commands.add('dismissWelcomePopup', (waitForAppearance = false, attempt = 0) => {
-  cy.get('body').then(($body) => {
+  // Sondage silencieux : seul le clic « Fermer » apparaît dans le journal.
+  cy.get('body', { log: false }).then(($body) => {
     const modal = $body.find(OPEN_MODAL).filter((_, dialog) => closeButtonsOf(Cypress.$(dialog)).length).first()
     if (modal.length) {
       const modalEl = modal.get(0)
-      cy.wrap(closeButtonsOf(modal).first()).click()
+      cy.wrap(closeButtonsOf(modal).first(), { log: false }).click()
       // La modale peut être retirée du DOM ou simplement fermée : on requête le body.
-      cy.get('body').should(($b) => {
+      cy.get('body', { log: false }).should(() => {
         expect(modalEl.isConnected && modalEl.hasAttribute('open')).to.eq(false)
       })
       if (attempt < 12) cy.dismissWelcomePopup(waitForAppearance, attempt + 1)
