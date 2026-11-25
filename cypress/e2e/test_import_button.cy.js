@@ -26,25 +26,30 @@ function importLocalFile(filePath) {
 
 describe('Import de données locales', () => {
   beforeEach(() => {
-    cy.login()
-    // L'import local n'existe que dans l'éditeur de cartes, pas dans l'explorateur.
-    cy.openEditor()
-    cy.createMap()
+    cy.startEditor()
   })
 
   const cas = [
-    ['GeoJSON', 'cypress/fixtures/test.geojson'],
-    ['CSV', 'cypress/fixtures/test.csv'],
-    ['Shapefile (zip)', 'cypress/fixtures/test.zip'],
-    ['GeoPackage', 'cypress/fixtures/test.gpkg'],
-    ['GPX', 'cypress/fixtures/test.gpx'],
+    ['GeoJSON', 'cypress/fixtures/test.geojson', ['test']],
+    ['CSV', 'cypress/fixtures/test.csv', ['test']],
+    ['Shapefile (zip)', 'cypress/fixtures/test.zip', ['ZICAD_2024']],
+    ['GeoPackage', 'cypress/fixtures/test.gpkg', ['export']],
+    ['GPX', 'cypress/fixtures/test.gpx', ['tracks', 'track_points']],
   ]
 
-  cas.forEach(([format, fichier]) => {
-    it(`importe un ${format}`, () => {
-      importLocalFile(fichier)
-      cy.get('[id^="GPshowLayersListPicto-"]').click()
-      cy.get('[id^="GPlayerSwitcher_ID_"]').should('have.length.at.least', 3)
+  // Les imports s'enchaînent dans la même carte et la même session, sans reconnexion.
+  it('enchaîne les imports de tous les formats', () => {
+    cas.forEach(([, fichier]) => importLocalFile(fichier))
+
+    // Le bas du bouton reste accessible sous la barre de partage.
+    cy.get('[id^="GPshowLayersListPicto-"]').click('bottom')
+      .should('have.attr', 'aria-pressed', 'true')
+    cy.get('[id^="GPlayersList-"]').should('be.visible').within(() => {
+      cas.forEach(([, , couches]) => {
+        couches.forEach((nom) => {
+          cy.contains('[id^="GPtitle_ID_"]', new RegExp(`^${nom}$`)).should('be.visible')
+        })
+      })
     })
   })
 })

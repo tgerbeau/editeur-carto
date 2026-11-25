@@ -95,13 +95,9 @@ Cypress.Commands.add('login', () => {
 function assertAuthenticated() {
   cy.get('.ol-viewport', { timeout: 30000 }).should('be.visible')
   dismissWelcomePopup()
-  cy.viewport(375, 812)
-  cy.get('#button-menu').should('be.visible').click()
   // Le menu se re-rend après ouverture : cy.contains réessaie jusqu'à trouver le bouton.
   cy.contains(`${CONNECTED_MARKER}:visible button`, 'Mon espace', { timeout: 30000 }).click()
   cy.get(`${CONNECTED_MARKER} a[href$="/explorer-les-cartes/login"]`).should('not.exist')
-  cy.get('#close-button').click()
-  cy.viewport(1280, 800)
 }
 
 function dismissWelcomePopup() {
@@ -132,8 +128,8 @@ Cypress.Commands.add('dismissWelcomePopup', (waitForAppearance = false, attempt 
   })
 })
 
-// Ouvre l'éditeur de cartes (creer-une-carte). Son authentification (compte « Ma carte ») est
-// distincte du SSO : on s'identifie via sa modale #login-modal si des identifiants éditeur existent.
+// Ouvre l'éditeur et active la session SSO depuis l'accueil si nécessaire.
+// Certains environnements proposent aussi une connexion via la modale #login-modal.
 const EDITOR_LOGIN_BTN = 'button[data-action="login"]:visible'
 
 Cypress.Commands.add('openEditor', () => {
@@ -145,6 +141,16 @@ Cypress.Commands.add('openEditor', () => {
   cy.dismissWelcomePopup(true)
 
   cy.get('body', { log: false }).then(($body) => {
+    const connectButton = $body.find('#ConnectDialog button:visible').filter((_, button) =>
+      button.innerText.includes('Connectez-vous avant de commencer')
+    )
+    if (connectButton.length) {
+      cy.wrap(connectButton).click()
+      cy.contains('#ConnectDialog button:visible', 'Créer une carte', { timeout: 30000 })
+        .should('be.visible')
+      return
+    }
+
     if (!username || !password || !$body.find(EDITOR_LOGIN_BTN).length) return
     cy.get(EDITOR_LOGIN_BTN).first().click()
     cy.get('#login-modal input[name="username"]', { timeout: 10000 }).should('be.visible')
@@ -176,6 +182,13 @@ Cypress.Commands.add('createMap', () => {
       cy.get('#ConnectDialog').should('not.have.attr', 'open')
     }
   })
+})
+
+// Parcours d'entrée commun : connexion unique (session en cache), éditeur ouvert, carte vierge prête.
+Cypress.Commands.add('startEditor', () => {
+  cy.login()
+  cy.openEditor()
+  cy.createMap()
 })
 
 // Ouvre le menu « Gérer ma carte » et déclenche l'action demandée (save-map, open-map, ...).
