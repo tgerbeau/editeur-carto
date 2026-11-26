@@ -66,6 +66,8 @@ Cypress.Commands.add('login', () => {
     } else {
       // Mut-dev nécessite une navigation explicite ; GitHub Pages redirige automatiquement.
       if (appHostname() === 'cartes.mut-dev.ign.fr') {
+        cy.get('.ol-viewport', { timeout: 30000 }).should('be.visible')
+        dismissWelcomePopup()
         cy.visit(new URL('login', baseUrl).toString())
       }
       cy.location('hostname', { timeout: 30000 }).should('not.eq', appHostname())
