@@ -64,7 +64,10 @@ Cypress.Commands.add('login', () => {
       })
       cy.location('hostname', { timeout: 30000 }).should('eq', appHostname())
     } else {
-      // L'éditeur GitHub Pages redirige vers le SSO après son chargement.
+      // Mut-dev nécessite une navigation explicite ; GitHub Pages redirige automatiquement.
+      if (appHostname() === 'cartes.mut-dev.ign.fr') {
+        cy.visit(new URL('login', baseUrl).toString())
+      }
       cy.location('hostname', { timeout: 30000 }).should('not.eq', appHostname())
       cy.location('origin').then((ssoOrigin) => {
         cy.origin(ssoOrigin, { args: { username, password } }, ({ username, password }) => {
