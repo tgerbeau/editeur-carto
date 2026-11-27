@@ -1,45 +1,29 @@
-function login(username, password) {
-  cy.visit(Cypress.env('baseUrl'))
-  cy.contains('Se connecter').click()
-  cy.get('[name="username"]').type(username)
-  cy.get('[name="password"]').type(password)
-  cy.get('[data-action-id="login"]').click();
-}
-
 function checkMonEspaceElements() {
   cy.log('Vérification du menu Mon espace')
-  cy.contains('Mon espace').click()
-  cy.contains('Tableau de bord').should('be.visible')
-  cy.contains('Mon compte').should('be.visible')
-  cy.contains('Se déconnecter').should('be.visible')
-  cy.contains('Mon espace').click()
-}
-
-function creerUneCarte() {
-  cy.log('Création d\'une nouvelle carte')
-  cy.createMapWithPopupHandling()
-  cy.get('.fr-text').should('have.text', 'Carte sans titre')
+  cy.get('nav#mon-espace').filter(':visible').first().within(() => {
+    cy.contains('button', 'Mon espace').click()
+    cy.contains('a', 'Tableau de bord').should('be.visible')
+    cy.contains('a', 'Mon compte').should('be.visible')
+    cy.contains('a', 'Se déconnecter').should('be.visible')
+    cy.contains('button', 'Mon espace').click()
+  })
 }
 
 function verifierElementsVisuels() {
   cy.log('Vérification des éléments visuels de l’interface')
-  cy.get('[id^="GPsearchInputText"]').should('be.visible')
-  cy.get('[id*="bar"]').should('be.visible') // barre haut droite (avec id dynamique)
-  cy.get('.ol-viewport').should('be.visible') // la carte elle-même 
+  cy.get('[id^="GPsearchInputText"]').filter(':visible').should('have.length.at.least', 1)
+  cy.get('[id^="GPshowLayersListPicto-"]').should('be.visible')
+  cy.get('.ol-viewport').should('be.visible')
 }
 
-
 describe('Tests utilisateur connecté', () => {
-  before(() => {
-    const username = Cypress.env('username')
-    const password = Cypress.env('password')
-    login(username, password)
-    cy.contains('Mon espace').should('be.visible')
+  beforeEach(() => {
+    cy.login()
   })
 
   it('doit afficher les éléments du menu Mon espace', () => {
     checkMonEspaceElements()
-    creerUneCarte()
+    cy.createMap()
     verifierElementsVisuels()
   })
 })

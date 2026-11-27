@@ -1,19 +1,37 @@
-describe('Recherche d\'adresse', () => {
-  it('doit permettre de rechercher une adresse et de sélectionner le premier résultat', () => {
+describe("Recherche d'adresse", () => {
+  it('propose des résultats et recentre la carte sur le premier', () => {
+    cy.visit(Cypress.env('baseUrl'))
+    cy.dismissWelcomePopup(true)
+    cy.createMap()
+
     cy.fixture('adresse').then((data) => {
-      cy.visit(Cypress.env('baseUrl'))
-      cy.contains('Se connecter').click()
-      cy.get('[name="username"]').type(Cypress.env('username'))
-      cy.get('[name="password"]').type(Cypress.env('password'))
-      cy.get('[data-action-id="login"]').click();
-      cy.contains('Mon espace').should('be.visible')
-      cy.createMapWithPopupHandling()
-      cy.get('[id^="GPsearchInputText"]').first().type('10 Rue de la Paix, 50100 Cherbourg-en-Cotentin{enter}')
-      cy.get('[id^="GPsearchInputText"]').should('have.length.greaterThan', 0)
-      // Sélectionne le premier élément de la liste déroulante des résultats
-      cy.get('[id^="GPsearchInputText"]').first().click()
-      // Vérifie que le résultat sélectionné s'affiche sur la carte ou dans le champ (adapte le sélecteur si besoin)
-      cy.contains(data.adresse).should('be.visible')
+      cy.get('.ol-scale-line-inner').invoke('text').as('echelleInitiale')
+
+      cy.get('[id^="GPsearchInputText"]').filter(':visible').first().clear()
+      cy.get('[id^="GPsearchInputText"]').filter(':visible').first().type(data.adresse)
+      cy.get('[id^="GPsearchInputText"]').filter(':visible').first()
+        .should('have.value', data.adresse)
+
+      // Les propositions d'autocomplétion arrivent du service de géocodage
+      cy.get('[id^="GPautoCompleteList"]:visible li', { timeout: 30000 })
+        .should('have.length.at.least', 1)
+        .first()
+        .should('contain.text', 'Orfèvres')
+        .click()
+
+      // La carte a zoomé sur le résultat
+      cy.get('@echelleInitiale').then((avant) => {
+        cy.get('.ol-scale-line-inner', { timeout: 30000 }).should('not.have.text', avant)
+      })
+
+      cy.contains('La couche est ajoutée à la carte', { timeout: 30000 }).should('not.exist')
+      cy.get('.ol-viewport canvas', { timeout: 30000 })
+        .should('be.visible')
+        .and(($canvas) => {
+          expect($canvas[0].width).to.be.greaterThan(0)
+          expect($canvas[0].height).to.be.greaterThan(0)
+        })
+      cy.screenshot('recherche-36-quai-des-orfevres')
     })
   })
 })

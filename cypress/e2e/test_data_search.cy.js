@@ -18,5 +18,9 @@ describe('Recherche de données', () => {
       .click()
 
     cy.location('pathname', { timeout: 30000 }).should('eq', datasetPath)
+    cy.contains(
+      'La BD TOPO® version 3.5 contient une description vectorielle 3D (structurée en objets) des éléments du territoire et de ses infrastructures, de précision métrique.',
+      { timeout: 30000 },
+    ).should('be.visible')
   })
 })

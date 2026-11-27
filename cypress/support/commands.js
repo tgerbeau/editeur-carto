@@ -207,12 +207,20 @@ Cypress.Commands.add('mapMenuAction', (action) => {
   cy.get(`[data-action="${action}"]`).filter(':visible').first().click()
 })
 
-// Enregistre la carte courante avec un nom et une thématique, et attend la fermeture de la modale.
-Cypress.Commands.add('saveMap', (name, theme = 'Agriculture') => {
+// Enregistre la carte courante en renseignant tout le formulaire (nom, thématique, description)
+// et attend la fermeture de la modale.
+Cypress.Commands.add('saveMap', (name, theme = 'Agriculture', description = `Carte créée par les tests automatisés : ${name}`) => {
   assertEditorAuthenticated()
   cy.mapMenuAction('save-map')
   cy.get('input[name="name"]', { timeout: 10000 }).should('be.visible').clear().type(name)
-  cy.get('#save-theme').select(theme)
+  cy.get('input[name="name"]').should('have.value', name)
+
+  // Les thématiques sont chargées par l'API : cy.select réessaie jusqu'à ce que l'option existe.
+  cy.get('#save-theme').select(theme, { timeout: 15000 })
+  cy.get('#save-theme').should('not.have.value', '')
+
+  cy.get('#save-description').clear().type(description, { delay: 0 })
+  cy.get('#save-description').should('have.value', description)
   cy.get('input[name="name"]')
     .closest('dialog, .fr-modal')
     .find('.fr-modal__footer button')

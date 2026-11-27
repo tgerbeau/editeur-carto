@@ -5,7 +5,7 @@ describe('Gestion de carte', () => {
     cy.login()
     cy.openEditor()
     cy.createMap()
-    cy.saveMap(nomCarte)
+    cy.saveMap(nomCarte, 'Agriculture')
 
     // Retour à l'espace utilisateur de l'éditeur
     cy.visit(Cypress.env('editorUrl') + '?view=user-space')

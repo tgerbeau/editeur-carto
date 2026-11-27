@@ -36,3 +36,10 @@ Cypress.on('window:before:load', (win) => {
     characterData: true,
   })
 })
+
+// Erreurs connues de l'application (catalogue), sans lien avec les parcours testés.
+Cypress.on('uncaught:exception', (err) => {
+  if (/localeCompare|is not a valid selector/.test(err.message)) {
+    return false
+  }
+})

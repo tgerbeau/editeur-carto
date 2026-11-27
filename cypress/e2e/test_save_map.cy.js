@@ -5,6 +5,6 @@ describe('Parcours de sauvegarde de carte', () => {
     cy.login()
     cy.openEditor()
     cy.createMap()
-    cy.saveMap(titreCarte)
+    cy.saveMap(titreCarte, 'Agriculture')
   })
 })
